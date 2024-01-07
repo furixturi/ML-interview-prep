@@ -288,7 +288,14 @@ Use classification when the target variable is categorical (discrete) and the ta
 
 #### 3. How do you choose which ML algorithm to use?
 
-
+1. Type of problem: classification? Regression? Clustering?
+2. Size and quality of data at hand
+   1. Small dataset: deep learning require large amounts data. Also you're at more risk of overfitting. Consider algorithms with buil-in regularization like **Ridge (L2) or Lasso (L1) regression**, or ensemble methods like **Random Forest**
+   2. quality of data: if your dataset has lots of missing values or noise, start with algorithms that are robust to this, e.g., **Random Forest**
+3. Computation time
+   1. consider training time and prediction time you are aiming for. Models like SVM or DL are computationally intensive and needs a lot of computation resource and time
+4. Interpretability
+   1. Industries like health and finance have high compliance requirements and may prefer simpler, more interpretable models such as Decision Trees, Logistic Rergession
 
 #### 4. What is PCA? When and how do you use it?
 
@@ -312,15 +319,40 @@ To apply PCA:
 
 #### 1. What is Deep Learning and how is it different from machine learning?
 
+DL is a subset of ML. It involves algorithms inspired by the structure and function of brain, called artificial neural networks. The "deep" refers to that there are multiple layers in such networks, through which data is transformed and complex pattern is learned. 
 
+DL vs ML:
+
+- DL can handle large amount of complex datasets, like images, sound, and text, where relationships between input and output are non-linear and not easy to interpret. Thus DL is well suited for complex problems such as image recognition, NLP, and speech recognition, while traditional ML is usually better dealing with tabular data and can be more efficient for simpler tasks. 
+- DL requires a larger amount of training data than traditional ML algorithms.
+- DL is more computaionally intensive due to its multiple layers and more complex model architecutre.
+- DL can reduce the need for feature engineering, as it automatically detects relevant features. Traditional ML often relies heavily on feature engineering
+- Traditional ML models are more easily to interpret than DL models
 
 #### 2. What is a neural network? What is a neuron?
 
+A **Neural Network** is a computational model inspired by the way biological neural networks in human brain process information. A NN is composed of layers of interconnected units or nodes called "neurons". These typically include an input layer, one or more hidden layers, and an output layer. Each neuron receives input from the previous layer, processes the input, and passes its output to the next layer. The network learns by adjusting the weights of connections between neurons. 
 
+A **Neuron** is a basic union of neural network. It receives one or more **inputs**, which can be features from the dataset or output from other neurons. Each input has an associated **weight**, which is a trainable parameter that the network learns during training. The neuron applies an **activation function** to the weighted sum of its input, which calculates whether or to what extend the signal should be further propagated through the network.The result of the activation function is the **ouput** of the neuron, which then becomes the input to the neuron in the next layer.
 
 #### 3. What are the layers of a typical NN? What are their uses?
 
+A typical NN would have several layers, including the input layer, one or more hidden layers, and an output layer.
 
+**Input Layer** receives the raw input data. The number of neurons in this layer usually correspond to the number of features in the dataset.
+
+**Hidden Layers** perform computations on the inputs received from previous layer, using **weights**, **biases**, and **activation functions**. The complexity and depth of a NN are determined by the number and size of these hidden layers. Different layers can learn different aspects of the data. Early layers might learn basic features, while deeper layers can learn more abstract concepts.
+
+**Output Layer** produces the final output. For classification, it often uses a softmax activation function to output a probability distribution over classes (or sigmoid for binary classification.) For regression tasks, it might have a single neuron that outputs a continuous value.
+
+**Common hidden layers** include
+
+- **Dense (Fully Connected) Layers**: each neuron receives input from all neurons of the previous layer, making them fully connected. This is used in most types of NN
+- **Convolutional Layers**: they apply a convolution operation to the input. which are commonly used in CNNs for image processing tasks
+- **Pooling Layers**: also used in CNNs, usually following convolutional layers. They serve to reduce the spatial dimensions (width and height) of the input volume for the next convolutional layer
+- **Recurrent Layers**: used in RNNs for processing sequential data such as time series and text. They have loops to persist information from one step of the sequence to the next, maintaining a "memory" of previous input.
+- **Normalization Layers**: used to normalize the output of the previous layer, improving the stability and speed of the network training.
+- **Dropout Layers**: used to prevent overfitting by randomly dropping out a subset of neurons and their connections during training.
 
 ### Training
 
@@ -332,7 +364,7 @@ To apply PCA:
 
 
 
-#### 3. What is a loss function? Name common loss functions and their use cases
+#### 3. What is a loss function? Name common loss functions and how do we choose them
 
 
 
@@ -376,11 +408,19 @@ To apply PCA:
 
 
 
-#### 2. Name NLP algorithms and how they work
 
 
 
-#### 3. Name CV algorithms and how they work
+
+### NLP
+
+#### 1. Name NLP algorithms and how they work
+
+
+
+### CV
+
+#### 1. Name CV algorithms and how they work
 
 
 
