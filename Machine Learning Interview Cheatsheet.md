@@ -358,47 +358,131 @@ A typical NN would have several layers, including the input layer, one or more h
 
 #### 1. What is gradient descent?
 
+Gradient descent is an optimization algorithm used in ML to minimize cost function, update parameters (weights) to find the minimum cost function (the cost function measures the difference between the model's prediction and the actual data).
 
+At each step, the gradient (or the slope of the function, which points to the steepest ascent) is calculated, which is the partial derivatives of cost function with respect to each parameter (weight). Then to minimize the function, the parameters are updated by moving them to the opposite direction of the gradient. The process is iterated until the algorithm converges to the minimum of the function.
 
-#### 2. What is back propogation?
+How much to update at each step is decided by the hyper parameter **learning rate**. A small learning rate make the learning process slow and might stuck at local optimum point, while a too large learning rate might cause overshooting and never converge to the minimum. 
 
+Different types of gradient descent:
 
+- **Batch Gradient Descent**: compute the gradient using the whole dataset. This can be very slow and computationally expensive for large datasets
+- **Stochastic Gradient Descent (SGD)**: compute the gradient and update the parameters one by one for each data point. It's faster but has a higher variance in the parameter updates, which can cause the cost function to fluctuate.
+- **Mini-batch Gradient Descent**: a compromise between batch and stochastic gradient descent. It computes the gradient and updates the parameters on small batches of data. This is most commonly used.
+
+#### 2. What is back propagation?
+
+Back propagation is an algorithm used in training NN, especially DL. It is a mechanism used to update the weights of the network efficiently in order to reduce the network's prediction error.
+
+How it works:
+
+1. First go through the **Forward pass**, where data is passed through the network, from input layer through each layer using the current set of weights, to compute the output.
+2. Then we calculate the loss with the output, which measures how for the network's output is from the actual target value
+3. Now we enter the **Backward pass**. The loss is propagated back through the network in reverse, from output layer back to the input layer. During this pass, the partial derivatives with respect to each weight is calculated. This involves applying the chain rule of calculus to compute the gradient of the loss function with respect to each weight.
+4. The weights are then updated with the calculated gradient. The size of the update is determined by a hyperparameter called learning rate.
+5. Repeat this process for many iterations or epochs over the entire dataset, until the network weights converge to a state where the loss is minimized. 
 
 #### 3. What is a loss function? Name common loss functions and how do we choose them
 
+A loss function, also called cost function or error function, quantifies the difference between the predicted values and the actual values in the data. The goal of ML training is typically to minimize the loss function.
 
+Common loss functions:
+
+- **MSE (Mean Squared Error)**: calculates the average of the squares of the errors. Used in regression tasks. Good if your dataset doesn't have outliers and you want to punish larger errors.
+- **MAE (Mean Absolute Error)**: calculates the average of absolute differences between predicted values and actual values. Used in regression tasks. Good if your data contain outliers or you want to treat all errors equally.
+- **Cross-Entropy (Log Loss)**: measures the performance of a classification model whose ouput is a probability value between 0 and 1. Used in classification tasks.
+- **Hinge loss**: used for SVM.
+- **Huber loss**: combines MSE and MAE, the loss is quadratic for small errors and linear for large errors, making it robust to outliers in regression tasks.
 
 #### 4. What is an activation function? Why do you use it? Explain sigmoid, ReLU, leaky ReLU, tanh, softmax and when to use them
 
+Activation function in NN is a mathematical function applied to the output of a neuron. It introduces non-linearity to the NN, allowing it to learn and perform more complex tasks. They also help to normalize the output of each neuron, e.g., between 0 and 1 or -1 and 1.
 
+Common activation functions:
+
+- **Sigmoid (Logistic Function)**: squashes the input value between 0 and 1. Often used in binary classification's output layer. Limitation: can cause vanishing gradient problem. not zero-centered
+- **ReLU (Rectified Linear Unit)**: outputs the input if it is positive, 0 otherwise. Used in hidden layers. It helps overcome the vanishing gradient problem and allows faster training. Limitation: it can cause neurons to die during training.
+- **Leaky ReLU**: similar to ReLU but allows a small, non-zero gradient when the unit is not active (Leaky ReLU(x) = max(0.01x, x)). Can be used in hidden layers where ReLU is applicable. It might fix the dying neuron problem of ReLU.
+- **TanH (Hyperbolic Tangent)**: squashes values between -1 and 1. Used in hidden layers. It's zero-centered which makes optimization easier in some cases. Limitations: it can still suffer from vanishing gradient problem
+- **Softmax**: converts a vetor of numbers into a vector of probabilities that sum up to 1. Commonly used in ouput layer of multi-class classifier.
 
 #### 5. What is weight and bias in a NN? How do you initialize weights?
 
+Weights in a NN are the parameters that multiply with the input data. Each connection between neurons in different layers has an associated weight. These weights are adjustied during training to minimize loss. The collection of all weights essentially defines the learned model.
 
+Bias is an additional parameter added to the weighted sum of inputs before passing it through an activation function. It acts like an intercept term in a linear equation. It allow the network to shift the activation to the left or right, rather than always passing through the origin of the input space.
 
-#### 6. What are optimizers? Name some optimizers and explain when to use which
+Ways to initialize weights:
 
+- **Random initialization**: initialize weights to random small numbers. Initializing them too large or too small can cause exploding or vanishing gradient problem
+- **Xavier/Glorot Initilaization**: initialize the weights with values from a distribution with zero mean and variance 1/(number of input). Good for using tanh activation.
+- **He initialization**: initialize the weights with values from a distribution with 0 mean and variance 2/(number of inputs). Good for using ReLU
+- **Orthogonal initialization**: initialize the weights as orthogonal matrices. Beneficial for deep networks since it helps preserve the magnitude of backpropagated gradients and can reduce risk of vanishing/exploding gradient.
 
+#### 6. What are optimizers? Name some optimizers and explain when to use which?
 
-#### 7. What are hyperparameters? How do you tune hyperparameters?
+Optimizers are algorithms and methods that help train a NN.
 
+Common optimizers:
 
+- **Gradient descent**: the most basic optimizer. It updates the weights by directly subtracting the gradient of loss function with respect to the weights. Not used much due to its inefficiency.
+- **SGD**: a variation of gradient descent. SGD updates the weights using only a single data point. It's more efficient than standard gradient descent and is widely used.
+- **Momentum**: helps accelerate SGD in the relevant direction and dampens oscillations. It does this by adding a fraction of the update vector of the past step to the current update vector. It's useful for faster convergence and dealing with the ravines or plateaus in the loss landscape.
+- **Adagrad**: adapts the learning rate to the parameters, performing larger updates for infrequent and smaller updates for frequent parameters. Good for sparse data.
+- **RMSprop**: address some of Adagrad's issue by using a moving average of squared gradients to normalize the gradient, leading to better performance in the online and non-stationary settings.
+- **Adam (Adaptive Moment Estimation)**: combines Momentum and RMSprop. It computes adaptive learning rates for each parameter. Fairly robust and widely used.
+- **AdamW**: a variation of Adam with a different way of handling weight decay. It decouples the weight decay from the gradient updates, which can lead to better performances in some cases.
 
-#### 8. What is SGD? When and how to use it?
+How to choose optimizer:
 
+- Simple, convex problems or problems with a small amount of data: basic SGD
+- Deep learning tasks: Adam is often a good starting point
+- Where precision is crucial (like training a language model): RMSprop or Adagrad, since adjusting learning rate based on the parameters can be beneficial
+- Very deep NN or NN with a complex structure: AdamW or SGD with momentum might provide better convergence
 
+#### 7. What are hyperparameters? Name some hyperparameters and explain how you choose their initial values. How do you tune hyperparameters?
 
-#### 9. What is mini-batch? When and how to use it?
+Hyperparameters are parameters that set prior to the training process and are not learned from the data. 
 
+Some common hyperparameters:
 
+- **Learning Rate**: determines the step size at each iteration to adjust weight towards minimum loss. Too large can cause model to overshoot and never converge, too small can make the training process needlessly long and complex. Initial vvalue is often set to a small value like 0.001 or 0.01, or use adaptive rates like Adam optimizer.
+- **Number of epochs**: the number of times the training process to walk through the entire dataset. Too few can lead to underfitting, to many can lead to overfitting.
+- **Batch size**: the number of training examples used in one iteration. Smaller batch size typically mean more updates in one epoch, which requires more computation but can lead to faster convergence. Common batch size choices are 32, 64, 128, depending on available memory
+- **Number of layers and neurons in each layer**: defines the NN architecture. More layers and neurons make the model more complex, which can handle more complex problems but can also lead to overfitting 
+- **Activation functions**: like ReLU, Sigmoid, Tanh
+- **Regularization parameters**: like L1 or L2 regularization, dropout, etc. to prevent overfitting
+
+Ways to tune hyperparameters:
+
+- **Grid Search**: test every combination of a predefined list of values. It's exhaustive but time cosuming.
+- **Random Search**: Randomly selecting combinations of hyperparameter values. This can be more efficient than grid search.
+- **Bayesian Optimization**: use a probablistic model to predict the performance of hyperparameters and choose new hyperparameters based on this model 
+- **Automated Hyperparameter Tuning Tools**
 
 #### 10. What is MLP? How do you implement it? When and how do you use it?
 
+**MLP (Multi Layer Perceptron)** is a foundational architecture in neural network. It consists of an input layer, one or more fully connected hidden layers, and an output layer. Activation functions like ReLU, sigmoid or tanh are used to introduce non-linearity. Training MLP uses back propagation. 
 
+MLP is typically used for supervised learning problems. It can be used in various simple to moderate complexity tasks, especially where the data doesn't have a significant spatial or temporal component. For more complex tasks involving images, videos, or sequential data, more specialized architectures like CNN or RNN are usually more effective.
 
 #### 11. What is vanishing gradient and exploding gradient? How to combat them?
 
+Vanishing gradient and exploding gradient are two common problems encountered when training deep neural networks, especially with traditional activation functions like sigmoid or tanh. They are primarily related to how gradients are propagated back through the network during training, where gradients are multiplied by weights and derivatives of the activation functions.
 
+**Vanishing gradient** occurs when the gradients of the network's weights become very small, effectively preventing the weights from changing their values. In deep network, gradients are back-propagated from output to input layer, during which they get multiplied by the weights and the derivatives of the activation functions. If these numbers are small (<1), the gradient can diminish exponentially as they reach early layers, making it very hard for the network to learn and converge especially for early layers.
+
+**Exploding gradient** is the opposite of vanishing gradient. It occurs when the gradients of the network's weight become excessively large. This can cause the weights to oscillate or diverge, rather than converge, during training. It is also a result of back-propagation process, but in this case, the gradients grow exponentially through the layers due to large weights or derivatives.
+
+To combat vanishing and exploding gradient:
+
+- **Use ReLU or Leaky ReLU Activation Functions** to help mitigate vanishing gradient problem.
+- **Weight initialization**: use He or Xavier initialization can set the weights to optimal values based on the nbumber of input and output neurons.
+- **Batch normalization**: this normalizes the input layer by adjusting and scaling the activations. It can mitigates the problem by maintaining the mean ouput close to 0 and the output standard deviation close to 1.
+- **Gradient clipping**: this is to prevent exploding gradient especially in RNNs. It scales down the gradient if they exceed a set threshold, ensuring they don't grow too large.
+- **Use Shorter Networks or Residual Connections**: use networks with fewer layers, or use "Residual Connections" like in ResNet (which allow gradients to bypass certain layers throught the addition of a shortcut connection) can help alleviate vanishing gradient problem
+- **Skip Connections and Highway Networks**: these structures allow gradients to flow across several layers without undergoing too much transformation
+- **Use LSTM/GRU for RNNs**: in the case of recurrent neural networks, using LSTM (Long Short Term Memory) or GRU (Gated Recurrent Units) can help avoid these issues
 
 
 
@@ -418,6 +502,34 @@ A typical NN would have several layers, including the input layer, one or more h
 
 
 
+#### 2. What is TF-IDF?
+
+
+
+#### 3. What are common pre-processing techniques in NLP?
+
+
+
+#### 4. What is tokenization in NLP?
+
+
+
+#### 5. What is stemming and how is it different from lemmatization?
+
+
+
+#### 6. RNN 
+
+
+
+#### 7. LSTM 
+
+
+
+#### 8. GRU
+
+
+
 ### CV
 
 #### 1. Name CV algorithms and how they work
@@ -431,4 +543,24 @@ A typical NN would have several layers, including the input layer, one or more h
 
 
 ## Generative AI & LLM
+
+### Transformer
+
+#### 1. What is the Transformer model?
+
+
+
+#### 2. Describe the Transformer model architecture
+
+
+
+#### 3. What is attention mechanism in Transformer model?
+
+
+
+#### 4. What is self-attention mechanism?
+
+
+
+#### 5. What is the purpose of the multi-head attention mechanism?
 
