@@ -240,11 +240,11 @@ Regulairzation is a technique to prevent overfitting by penalizing models for th
 Common regularization techniques:
 
 1. **L1 Regularization (Lasso Regression)**: adds a penalty equal to the absolute value of the magnitude of coefficients (the sum of the absolute value of coefficients) to the loss function
-   1. This can lead to some coefficients being shrunk to zero, making the data sparse, effectively performing feature selection. 
+   1. This can lead to some coefficients being shrunk to zero, making the data sparse, <u>effectively performing feature selection.</u> 
    2. Useful when you suspect some features are not important and want the model to reflect that
 2. **L2 Regularization (Ridge Regression)**: adds a penalty equal to the square of the magnitude of coeeficients (the sum of the square of coefficients) to the loss function
    1. Doesn't result in 0 coefficients, but encourages them to be small. Effective at handling collinearity (high correlation between variables)
-   2. Commonly used when you have a dataset with many features
+   2. <u>Commonly used when you have a dataset with many features</u>
 3. **Dropout (in NN)**: during training, randomly ignore some neurons' outputs of a layer, turning them off for downstream neurons.
    1. It reduces neuron co-adaptation, where neurons rely too heavily on the presence of specific other neurons during training and cannot operate independently, reducing the network's generalizing ability.
    2. Common in NN, especially when training large NN
@@ -472,12 +472,21 @@ Vanishing gradient and exploding gradient are two common problems encountered wh
 
 **Vanishing gradient** occurs when the gradients of the network's weights become very small, effectively preventing the weights from changing their values. In deep network, gradients are back-propagated from output to input layer, during which they get multiplied by the weights and the derivatives of the activation functions. If these numbers are small (<1), the gradient can diminish exponentially as they reach early layers, making it very hard for the network to learn and converge especially for early layers.
 
+Mitigation methods:
+
+- Use **ReLU or Leaky ReLU** as activation functions. Positive inputs will have their gradient to be 1
+- **Use Shorter Networks or Residual Connections**: use networks with fewer layers, or use "Residual Connections" like in ResNet (which allow gradients to bypass certain layers throught the addition of a shortcut connection) can help alleviate vanishing gradient problem
+
 **Exploding gradient** is the opposite of vanishing gradient. It occurs when the gradients of the network's weight become excessively large. This can cause the weights to oscillate or diverge, rather than converge, during training. It is also a result of back-propagation process, but in this case, the gradients grow exponentially through the layers due to large weights or derivatives.
+
+Mitigation methods:
+
+- **Gradient clipping**: this is to prevent exploding gradient especially in RNNs. It scales down the gradient if they exceed a set threshold, ensuring they don't grow too large.
 
 To combat vanishing and exploding gradient:
 
 - **Use ReLU or Leaky ReLU Activation Functions** to help mitigate vanishing gradient problem.
-- **Weight initialization**: use He or Xavier initialization can set the weights to optimal values based on the nbumber of input and output neurons.
+- **Weight initialization**: use He or Xavier initialization can set the weights to optimal values based on the number of input and output neurons.
 - **Batch normalization**: this normalizes the input layer by adjusting and scaling the activations. It can mitigates the problem by maintaining the mean ouput close to 0 and the output standard deviation close to 1.
 - **Gradient clipping**: this is to prevent exploding gradient especially in RNNs. It scales down the gradient if they exceed a set threshold, ensuring they don't grow too large.
 - **Use Shorter Networks or Residual Connections**: use networks with fewer layers, or use "Residual Connections" like in ResNet (which allow gradients to bypass certain layers throught the addition of a shortcut connection) can help alleviate vanishing gradient problem
@@ -490,55 +499,114 @@ To combat vanishing and exploding gradient:
 
 #### 1. Name common Deep Learning algorithms and their use cases
 
+- **CNN (Convolutional Neural Networks)**: a type of DL algorithm designed for processing data that has grid-like topology, such as images. Its layers apply convolutional filters that capture spatial hierachies and features like edges, textures, and more complex patterns in deeper layers. 
+  - Use cases: CNNs are widely used in CV tasks such as image analysis, object detection, facial recognition, autonomous vehicle perception systems
+  - Key components: 
+    - **Convolutional layers** are the core building blocks of a CNN. They perform a mathematical operation called convolution, which involves sliding filters (or kernel) over the input data (the image) to produce feature maps. The filters are applied over the intire image and are used to detect specific features like edges, shapes, contextures.
+    - **Activation function**: after each convolution, an activation function (like ReLU) is applied to introduce non-linearity, allowing the network to solve more complex problems.
+    - **Pooling layers**: these layers reduce the spatial size (width and height) of the input volume for the next convolutional layer. Max pooling is most commonly used, where the maximum element is selected from the region of the feature map covered by the filter. Pooling helps reduce the number of parameters and thus reduce the computation. It also controls overfitting.
+    - **Fully connected layers**: after several convolutional and pooling layers, the final output is flattened and fed to a fully connected layer, where high-level reasoning such as classification is done.
+  - Limitations: CNNs require large quantity of labeled training datasets, and they can be computationally intensive. CNN is also prone to overfitting due to its deep architecture, especially when there's not much training data.
 
-
-
-
-
+- **GAN (Generative Adversarial Networks)**: famous for creating highly realistic images. GANs consist of two parts: a generator that creates samples and a discriminator that evaluates them. The generator learns to produce more and more realistic data, while the discriminator gets better at distinguishing real data from fake. This adversarial process improves both networks.
+  - Use cases: video generation, creating virtual environments
+  - Limitations:  difficult to train due to issues like mode collapse, where the generator produces limited varieties of output and non-convergence. They require large datasets and significant GPU resources.
+- **Seq2Seq (Sequence to Sequence)**: a type of models that primarily used to map an input sequences to ouput sequences, like translation. They consist of an encoder and a decoder, both typically RNNs or LSTMs. The encoder processes the input sequence, and the decoder generates the output sequence.
+  - Use case: machine translation, text summarization, speech recognition
+  - Limitation: 
+    - struggle with long sequences handling. The longer the sequence, the more challenging to retain all relevant information untill the end, leading to issues like vanishing gradient.
+    - sequential processing can lead to inefficiencies in training and inference, unlike Transformers, seq2seq can't process data in parallel.
+- **RNN(Recurrent Neural Network)**
+- **LSTM (Long Shrot-Term Menory Networks)**
 
 ### NLP
 
-#### 1. Name NLP algorithms and how they work
+#### 1. Name common NLP tasks
 
-
+- named entity recognition (NER): identify key entities in text into predefined categories such as names of persons, organizations, locations.
+- machine translation
+- sentiment analysis
+- topic modeling
+- speech recognition
+- summarization
+- question answering
+- text generation
 
 #### 2. What is TF-IDF?
 
+Term frequency-inverse document frequency (TF-IDF) is a classical text representation technique in NLP. It uses a statistical measure to evaluate the importance of a word in a document relative to a corpus of documents. It is the combination of two terms: term frequency(TF), inverse document frequency(IDF).
 
+- Term Frequency (TF): how frequently a word appears in a document. A higher TF indicates that a term is more important in that specific document.
+- Inverse Document Freauency (IDF): measures how rare or unique a term is across documents in the entire corpus. It down weight the terms that frequently appear in all documents and update the importance of the rare terms.
+
+TF-IDF score is calculated by multiplying the TF and IDF for each term in a document. The result indicates the term's importance in the document and corpus. Terms that are frequent in a document but uncommon in the corpus will have high TF-IDF scores, suggesting their importance in that document.
 
 #### 3. What are common pre-processing techniques in NLP?
 
+NLP requires preprocessingthe raw text input to clean and change text data so that it may be processed or analyzed. The preprocessing typically involves a series of steps, which can include:
 
+- Tokenization
+- Stop-Word Removal
+- Text Normalization
+  - Lowercasing
+  - Lemmatization: convert words to their base or dictionary form, known as lemmas. E.g., "running" to "run", "better" to "good"
+  - Stemming: reduce words to their root form by removing suffixes or prefixes. E.g., ""playing" to "play", "cats" to "cat"
+  - Abbreviation expansion
+  - numerical normalization: convert numerical digits to written form 
+  - Date and time normalization
+- Remove special characters and punctuation
+- Remove HTML tags or markup
+- Spell correction
+- Sentence segmentation
 
 #### 4. What is tokenization in NLP?
 
+Tokenization is the process of breaking down text or string into smaller units called tokens. These tokens can be words, subwords, or characters. It is a fundamental step in NLP tasks. 
 
+#### 5. What is stemming and lemmatization? How are they different from each other?
 
-#### 5. What is stemming and how is it different from lemmatization?
+Stemming and lemmatization are two comonly used word normalization techniques in NLP, which aim to reduce the words into their base or root forms. Their goals are similar but approaces are different.
 
+- Stemming typically chopps off the word's suffixes or prefixes using heuristic or pattern-based rules, regardless of the context. E.g., cats to cat. It is simple but sometimes doesn't produce actual words, e.g., universe and university might both be stemmed to "univers"
+- Lemmatization reduces the word to its dictionary form, called lemma. It uses linguistic knowledge, taking into account the word's context, tense, number, etc. The output lemma are valid per dictionary. E.g., running, ran, runner would all result in "run", "better", "best", will be ouput to "good". Lemmatization can be more accurate than lemmatization but more complex and computationally intensive. 
 
+#### 6. What are embeddings?
 
-#### 6. RNN 
+Word embedding in NLP is a technique to represent text in a form that computer can process effectively. It convert words, phrases into numerical vectors in a high-dimensional vector space. These vectors capture semantic and syntactical features of the text, allowing words with similar meanings or other relationships to be represented closely in the vector space and thus allow algorithms to understand and process language effectively. It is also more efficient than the traditional text representation methods like one-hot encoding, as the latter produces high-dimensional sparse vectors that takes a lot of memory space.
 
+Common algorithms to create word embeddings:
 
+- Word2vec: uses Continuous Bag of Words (CBOW) to predict a word based on its context, and Skip-gram, which predicts the context given a word.
+- GloVe (Global Vectors for Word Representation): creates word vectors by analyzing word co-occurences in a corpus
+- BERT: consider the context of each word in both directions, uses transformer architecture, is context aware
 
-#### 7. LSTM 
+#### 7. RNN
 
+An NLP algorithm. 
 
+RNNs process sequential data by maintaining a hidden state that captures information about previous elements in the sequence. This allow them to make predictions based on both the current input and the context provided by oreceding sequence.
+
+Use cases: text generation, sentiment analysis, language modeling
+
+Limitations: difficulty handling long sequences due to vanishing gradient problem. Slow training and inference due to sequential processing
+
+#### 7. LSTM
+
+A type of RNN that is designed to address RNN's problem of learning long range dependences in sequence data. It has memory cells that can maintain information over extended periods. These cells are equipped with special units called gates - input gate, forget gate, output gate, to control the flow of information. They can retain important information over long sequences and forget irrelevant information.
+
+Use cases: machine translation, speech recognition, text summarization
+
+Limitations: computaionally intensive, require large datasets, and can be slow to train.
 
 #### 8. GRU
 
+A type of RNN that is designed to efficiently capture dependencies in sequencial data, similar to LSTM but has a simpler architecture. It has two gates, update gate and reset gate to control information flow. It doesn't have separate memory cells. 
 
-
-### CV
-
-#### 1. Name CV algorithms and how they work
-
-
+GRU is more memory efficient due to its simpler structure, making it a better choice for smaller datasets or use cases where computational efficiency is a priority.
 
 ### Evaluation
 
-#### 1. What are common evaluation metrics for Deep Learning? When to use which and why?
+#### 1. What are common evaluation metrics for NLP? When to use which and why?
 
 
 
